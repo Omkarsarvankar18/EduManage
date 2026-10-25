@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Student | Student Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.7px;
+            color: #172554;
+        }
+
+        .page-subtitle {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border: 1px solid #dbe2ec;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #eef2ff;
+            border-color: #c7d2fe;
+            color: #4338ca;
+        }
+
+        /* Form Card */
+
+        .form-card {
+            background: #ffffff;
+            border: 1px solid #e8edf5;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .form-card-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+            color: #ffffff;
+        }
+
+        .form-card-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .form-card-header p {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #e0e7ff;
+        }
+
+        .form-content {
+            padding: 32px 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .section-description {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 26px;
+        }
+
+        /* Form Fields */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #dbe2ec;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #1e293b;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .form-input:hover {
+            border-color: #a5b4fc;
+        }
+
+        .form-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+
+        .form-input:invalid:not(:placeholder-shown) {
+            border-color: #ef4444;
+        }
+
+        .field-help {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* Alerts */
+
+        .alert {
+            padding: 13px 16px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .alert-error {
+            color: #b91c1c;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            color: #166534;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* Form Buttons */
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #edf0f5;
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 21px;
+            border-radius: 10px;
+            border: none;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            color: #ffffff;
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.18);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3730a3, #4f46e5);
+            transform: translateY(-1px);
+            box-shadow: 0 7px 16px rgba(79, 70, 229, 0.22);
+        }
+
+        .btn-secondary {
+            color: #475569;
+            background: #ffffff;
+            border: 1px solid #dbe2ec;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .btn:focus-visible,
+        .back-btn:focus-visible {
+            outline: 3px solid #a5b4fc;
+            outline-offset: 3px;
+        }
+
+        /* Footer */
+
+        .page-footer {
+            margin-top: 22px;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* Responsive Design */
+
+        @media (max-width: 650px) {
+            .page-container {
+                padding: 24px 14px;
+            }
+
+            .page-title {
+                font-size: 25px;
+            }
+
+            .form-card-header {
+                padding: 22px;
+            }
+
+            .form-content {
+                padding: 24px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <!-- Page Header -->
+
+        <header class="page-header">
+
+            <div>
+                <h1 class="page-title">Add New Student</h1>
+
+                <p class="page-subtitle">
+                    Register a new student by entering their details below.
+                </p>
+            </div>
+
+            <a th:href="@{/students}" class="back-btn">
+                <span aria-hidden="true">&larr;</span>
+                Back to Students
+            </a>
+
+        </header>
+
+        <!-- Form Card -->
+
+        <section class="form-card">
+
+            <div class="form-card-header">
+                <h2>Student Information</h2>
+
+                <p>
+                    Enter the student's personal information to create a new record.
+                </p>
+            </div>
+
+            <div class="form-content">
+
+                <!-- Error Message -->
+
+                <div class="alert alert-error"
+                     th:if="${errorMessage != null}"
+                     th:text="${errorMessage}"
+                     role="alert">
+                </div>
+
+                <!-- Success Message -->
+
+                <div class="alert alert-success"
+                     th:if="${successMessage != null}"
+                     th:text="${successMessage}"
+                     role="status">
+                </div>
+
+                <!-- Add Student Form -->
+
+                <form th:action="@{/students}"
+                      th:object="${student}"
+                      method="post">
+
+                    <h3 class="section-title">Personal Details</h3>
+
+                    <p class="section-description">
+                        Fields marked with * are required.
+                    </p>
+
+                    <div class="form-grid">
+
+                        <!-- First Name -->
+
+                        <div class="form-group">
+
+                            <label for="firstName" class="form-label">
+                                First Name <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="firstName"
+                                th:field="*{firstName}"
+                                class="form-input"
+                                placeholder="Enter first name"
+                                minlength="2"
+                                maxlength="50"
+                                pattern="[A-Za-z ]+"
+                                title="Enter a name using letters and spaces only."
+                                autocomplete="given-name"
+                                required>
+
+                        </div>
+
+                        <!-- Last Name -->
+
+                        <div class="form-group">
+
+                            <label for="lastName" class="form-label">
+                                Last Name <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="lastName"
+                                th:field="*{lastName}"
+                                class="form-input"
+                                placeholder="Enter last name"
+                                minlength="2"
+                                maxlength="50"
+                                pattern="[A-Za-z ]+"
+                                title="Enter a name using letters and spaces only."
+                                autocomplete="family-name"
+                                required>
+
+                        </div>
+
+                        <!-- Email -->
+
+                        <div class="form-group full-width">
+
+                            <label for="email" class="form-label">
+                                Email Address <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                th:field="*{email}"
+                                class="form-input"
+                                placeholder="student@example.com"
+                                maxlength="100"
+                                autocomplete="email"
+                                required>
+
+                            <span class="field-help">
+                                Enter a valid email address for the student.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Action Buttons -->
+
+                    <div class="form-actions">
+
+                        <a th:href="@{/students}"
+                           class="btn btn-secondary">
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <span aria-hidden="true"></span>
+                            Save Student
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            Student Management System &copy; 2026
+        </footer>
+
+    </div>
+
+</body>
+</html>

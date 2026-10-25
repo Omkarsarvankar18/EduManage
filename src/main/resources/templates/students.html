@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Directory | Student Management System</title>
+
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Segoe UI", Arial, sans-serif;
+	background: #f4f7fb;
+	color: #1e293b;
+	min-height: 100vh;
+}
+
+.page-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 40px 24px;
+}
+
+/* Page Header */
+.page-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 20px;
+	flex-wrap: wrap;
+	margin-bottom: 30px;
+}
+
+.page-title {
+	font-size: 30px;
+	font-weight: 700;
+	letter-spacing: -0.7px;
+	color: #172554;
+}
+
+.page-subtitle {
+	margin-top: 8px;
+	color: #64748b;
+	font-size: 14px;
+}
+
+.header-badge {
+	background: #e0e7ff;
+	color: #4338ca;
+	padding: 10px 16px;
+	border-radius: 30px;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+/* Student Summary */
+.summary-card {
+	background: linear-gradient(135deg, #4338ca, #6366f1);
+	color: white;
+	border-radius: 18px;
+	padding: 26px 30px;
+	margin-bottom: 28px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 20px;
+	box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
+}
+
+.summary-label {
+	font-size: 14px;
+	opacity: 0.85;
+	margin-bottom: 8px;
+}
+
+.summary-number {
+	font-size: 34px;
+	font-weight: 700;
+}
+
+.summary-icon {
+	width: 58px;
+	height: 58px;
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.18);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 27px;
+}
+
+/* Main Content Card */
+.content-card {
+	background: #ffffff;
+	border: 1px solid #e8edf5;
+	border-radius: 18px;
+	overflow: hidden;
+	box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+}
+
+.content-header {
+	padding: 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 20px;
+	flex-wrap: wrap;
+	border-bottom: 1px solid #edf0f5;
+}
+
+.content-title {
+	font-size: 19px;
+	font-weight: 700;
+	color: #1e293b;
+}
+
+.content-description {
+	font-size: 13px;
+	color: #94a3b8;
+	margin-top: 6px;
+}
+
+.header-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+/* Search Box */
+.search-box {
+	position: relative;
+	width: 260px;
+	max-width: 100%;
+}
+
+.search-icon {
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #94a3b8;
+	font-size: 20px;
+}
+
+.search-input {
+	width: 100%;
+	padding: 12px 14px 12px 40px;
+	border: 1px solid #dbe2ec;
+	border-radius: 10px;
+	font-size: 13px;
+	outline: none;
+	transition: 0.2s;
+	background: #ffffff;
+}
+
+.search-input:focus {
+	border-color: #6366f1;
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* Add Student Button */
+.add-student-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 12px 18px;
+	background: linear-gradient(135deg, #4338ca, #6366f1);
+	color: #ffffff;
+	text-decoration: none;
+	font-size: 13px;
+	font-weight: 600;
+	border-radius: 10px;
+	white-space: nowrap;
+	box-shadow: 0 4px 10px rgba(79, 70, 229, 0.18);
+	transition: all 0.25s ease;
+}
+
+.add-student-btn span {
+	font-size: 20px;
+	line-height: 14px;
+}
+
+.add-student-btn:hover {
+	background: linear-gradient(135deg, #3730a3, #4f46e5);
+	transform: translateY(-2px);
+	box-shadow: 0 7px 16px rgba(79, 70, 229, 0.25);
+}
+
+.add-student-btn:focus-visible {
+	outline: 3px solid #a5b4fc;
+	outline-offset: 3px;
+}
+
+/* Students Table */
+.table-wrapper {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.student-table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.student-table thead {
+	background: #f8fafc;
+}
+
+.student-table th {
+	padding: 16px 24px;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	color: #64748b;
+	white-space: nowrap;
+}
+
+.student-table td {
+	padding: 18px 24px;
+	border-top: 1px solid #f1f5f9;
+	font-size: 14px;
+	color: #475569;
+}
+
+.student-table tbody tr {
+	transition: background 0.2s ease;
+}
+
+.student-table tbody tr:hover {
+	background: #f8faff;
+}
+
+.student-name {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.student-avatar {
+	width: 38px;
+	height: 38px;
+	border-radius: 12px;
+	background: #e0e7ff;
+	color: #4338ca;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	font-weight: 700;
+	flex-shrink: 0;
+}
+
+.email-text {
+	color: #64748b;
+	overflow-wrap: anywhere;
+}
+
+.status-badge {
+	display: inline-block;
+	padding: 6px 10px;
+	border-radius: 20px;
+	background: #dcfce7;
+	color: #15803d;
+	font-size: 11px;
+	font-weight: 700;
+}
+
+/* Empty States */
+.empty-state {
+	padding: 45px 20px;
+	text-align: center;
+	color: #64748b;
+}
+
+.empty-icon {
+	font-size: 36px;
+	margin-bottom: 12px;
+}
+
+.empty-state h3 {
+	color: #334155;
+	font-size: 17px;
+	margin-bottom: 8px;
+}
+
+.empty-state p {
+	font-size: 13px;
+}
+
+/* Table Footer */
+.table-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	padding: 18px 24px;
+	border-top: 1px solid #edf0f5;
+	color: #64748b;
+	font-size: 12px;
+}
+
+.table-footer strong {
+	color: #334155;
+}
+
+/* Responsive Design */
+@media ( max-width : 650px) {
+	.page-container {
+		padding: 24px 14px;
+	}
+	.page-title {
+		font-size: 25px;
+	}
+	.summary-card {
+		padding: 22px;
+	}
+	.content-header {
+		padding: 20px;
+		align-items: stretch;
+	}
+	.header-actions {
+		width: 100%;
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.search-box {
+		width: 100%;
+	}
+	.add-student-btn {
+		width: 100%;
+	}
+	.student-table th, .student-table td {
+		padding: 14px 16px;
+	}
+}
+</style>
+</head>
+
+<body>
+
+	<div class="page-container">
+
+		<!-- Page Header -->
+
+		<header class="page-header">
+			<div>
+				<h1 class="page-title">Student Directory</h1>
+
+				<p class="page-subtitle">View and manage your student
+					information in one place.</p>
+			</div>
+
+			<span class="header-badge"> Student Management System </span>
+		</header>
+
+		<!-- Student Summary Card -->
+
+		<section class="summary-card">
+			<div>
+				<p class="summary-label">Total Registered Students</p>
+
+				<div class="summary-number"
+					th:text="${students != null ? students.size() : 0}">0</div>
+			</div>
+
+			<div class="summary-icon" aria-hidden="true">🎓</div>
+		</section>
+
+		<!-- Students Content Card -->
+
+		<section class="content-card">
+
+			<!-- Content Header -->
+
+			<div class="content-header">
+
+				<div>
+					<h2 class="content-title">All Students</h2>
+
+					<p class="content-description">Student names and contact
+						information</p>
+				</div>
+
+				<div class="header-actions">
+
+					<!-- Search Students -->
+
+					<div class="search-box">
+						<span class="search-icon" aria-hidden="true">⌕</span> <input
+							type="search" id="studentSearch" class="search-input"
+							placeholder="Search students..."
+							aria-label="Search students by name or email">
+					</div>
+
+					<!-- Add Student Button -->
+
+
+
+					<a th:href="@{/students/new}" class="add-student-btn"> <span
+						aria-hidden="true"></span> Add Student
+					</a>
+
+				</div>
+
+			</div>
+
+			<!-- Student Table -->
+
+			<div class="table-wrapper">
+
+				<table class="student-table" id="studentsTable">
+
+					<thead>
+						<tr>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Email Address</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+
+					<tbody id="studentTableBody">
+
+						<tr th:each="student : ${students}" class="student-row">
+
+							<td>
+								<div class="student-name">
+
+
+									<span th:text="${student.firstName}"> First Name </span>
+
+								</div>
+							</td>
+
+							<td th:text="${student.lastName}">Last Name</td>
+
+							<td class="email-text" th:text="${student.email}">
+								student@example.com</td>
+
+							<td><span class="status-badge"> Registered </span></td>
+
+
+							<td style="white-space: nowrap;"><a
+								th:href="@{/students/edit/{id}(id=${student.id})}"
+								style="display: inline-block; padding: 8px 12px; background: #e0e7ff; color: #4338ca; text-decoration: none; border-radius: 7px; font-size: 12px; font-weight: 600;">
+									Update </a>
+
+								<form th:action="@{/students/delete/{id}(id=${student.id})}"
+									method="post" style="display: inline-block; margin-left: 5px;"
+									onsubmit="return confirm('Are you sure you want to delete this student?');">
+
+									<button type="submit"
+										style="padding: 8px 12px; background: #fee2e2; color: #b91c1c; border: none; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer;">
+										Delete</button>
+
+								</form></td>
+						</tr>
+
+					</tbody>
+
+				</table>
+
+				<!-- No Students Found -->
+
+				<div class="empty-state" id="noStudents"
+					th:if="${students == null or students.isEmpty()}">
+
+					<div class="empty-icon">📚</div>
+
+					<h3>No students found</h3>
+
+					<p>Click Add Student to create your first student record.</p>
+
+				</div>
+
+				<!-- No Search Results -->
+
+				<div class="empty-state" id="noSearchResults" style="display: none;">
+
+					<div class="empty-icon">🔍</div>
+
+					<h3>No matching students</h3>
+
+					<p>Try searching with a different name or email.</p>
+
+				</div>
+
+			</div>
+
+			<!-- Table Footer -->
+
+			<footer class="table-footer">
+
+				<span> Showing <strong id="visibleCount">0</strong> of <strong
+					id="totalCount" th:text="${students != null ? students.size() : 0}">
+						0 </strong> students
+				</span> <span>Student Directory</span>
+
+			</footer>
+
+		</section>
+
+	</div>
+
+	<!-- Live Search Functionality -->
+
+	<script>
+		const searchInput = document.getElementById("studentSearch");
+		const studentRows = document.querySelectorAll(".student-row");
+		const visibleCount = document.getElementById("visibleCount");
+		const noStudents = document.getElementById("noStudents");
+		const noSearchResults = document.getElementById("noSearchResults");
+
+		function updateStudentSearch() {
+			const searchValue = searchInput.value.toLowerCase().trim();
+			let visible = 0;
+
+			studentRows.forEach(function(row) {
+				const studentDetails = row.textContent.toLowerCase();
+				const matches = studentDetails.includes(searchValue);
+
+				row.style.display = matches ? "" : "none";
+
+				if (matches) {
+					visible++;
+				}
+			});
+
+			visibleCount.textContent = visible;
+
+			const hasStudents = studentRows.length > 0;
+
+			if (noStudents) {
+				noStudents.style.display = hasStudents ? "none" : "";
+			}
+
+			noSearchResults.style.display = hasStudents && visible === 0 ? ""
+					: "none";
+		}
+
+		searchInput.addEventListener("input", updateStudentSearch);
+
+		updateStudentSearch();
+	</script>
+
+</body>
+</html>
